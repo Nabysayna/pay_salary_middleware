@@ -94,6 +94,29 @@ $app->group('/accueil',function(){
         }
 
     });
+    $this->post('/getKiosque',function(Request $request, Response $response){
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Headers: Content-Type");
+        $data=$request->getParsedBody();
+         $bdd=new pdo("mysql:host=localhost;dbname=db778194042","root","");
+       $param=json_decode($data['param']);
+       /* return $response->WithJson(array("status"=>$param));
+        $bdd=new pdo("mysql:host=localhost;dbname=db778194042","root","");
+        $req1=$bdd->prepare("SELECT * FROM token WHERE id_user=:id AND token=:t");
+        $req1->execute(array("id"=>$param->id,"t"=>$param->token));
+        $use=$req1->fetch();
+        return $response->WithJson(array("status"=>$use));
+        if($use){*/
+            $numKiosque = '%'.$param->numero.'%';
+            $req=$bdd->prepare("SELECT * FROM `salaire` WHERE `infosup` LIKE :numeroKiosque AND `dateEnregistrement` BETWEEN :dateDebut and DATE_ADD(:dateFin, INTERVAL 2 DAY)" );
+            $req->execute(array(":numeroKiosque"=>$numKiosque,":dateDebut"=> $param->dateDebut,"dateFin"=>$param->dateFin));
+            $tontou =$req->fetchAll();
+            return $response->WithJson(array("status"=>1,"message"=>$tontou));
+        /*}else{
+            return $response->WithJson(array("status"=>0));
+        }*/
+
+    });
     $this->post('/getEmploye',function(Request $request, Response $response){
         header("Access-Control-Allow-Origin:*");
         header("Access-Control-Allow-Headers: Content-Type");
